@@ -1,0 +1,88 @@
+# =============================================================================
+# Telco Hub Pattern - Global Configuration
+# =============================================================================
+# This file contains global configuration values that apply across all environments.
+# These values are inherited by environment-specific values files.
+# Override specific values in values-hub.yaml or other environment files as needed.
+
+# =============================================================================
+# VALIDATED PATTERNS FRAMEWORK
+# =============================================================================
+
+global:
+  # -----------------------------------------------------------------------------
+  # Pattern Identity
+  # -----------------------------------------------------------------------------
+  pattern: telco-hub-pattern
+  namespace: telco-hub-pattern
+
+  # -----------------------------------------------------------------------------
+  # Cluster Domain Configuration
+  # -----------------------------------------------------------------------------
+  # IMPORTANT: Update these domains to match your OpenShift cluster configuration
+  hubClusterDomain: "apps.hub.example.com"
+  localClusterDomain: "apps.hub.example.com"
+  clusterDomain: "apps.hub.example.com"
+
+  # -----------------------------------------------------------------------------
+  # Default Git Repository Configuration
+  # -----------------------------------------------------------------------------
+  # Default values - override in environment-specific values files
+  repoURL: "https://github.com/openshift-kni/telco-reference.git"
+  targetRevision: "main"
+
+# =============================================================================
+# CLUSTER GROUP CONFIGURATION
+# =============================================================================
+# Configuration for the validated patterns framework clustergroup management
+
+clusterGroup:
+  name: hub                       # Cluster group name (hub for management cluster)
+  isHubCluster: true             # Identifies this as the hub/management cluster
+
+# =============================================================================
+# GLOBAL OVERRIDES (OPTIONAL)
+# =============================================================================
+# Uncomment and modify the sections below to apply global overrides.
+# These values will affect all environments unless explicitly overridden.
+
+# telcoHub:
+#   # Global ArgoCD configuration overrides
+#   argocd:
+#     project: "custom-project"
+#     
+#     # Global sync policy overrides (use with caution)
+#     syncPolicy:
+#       automated:
+#         allowEmpty: false
+#         prune: false
+#         selfHeal: false
+#
+#   # Global component defaults (uncomment to change defaults)
+#   components:
+#     acm:
+#       enabled: true
+#     gitops:
+#       enabled: true
+#     talm:
+#       enabled: true
+
+# =============================================================================
+# CONFIGURATION NOTES
+# =============================================================================
+# 
+# This file provides:
+# - Framework-level configuration (global, clusterGroup)
+# - Default values inherited by all environments
+# - Optional global overrides for advanced use cases
+#
+# Common use cases for global overrides:
+# - Setting organization-wide cluster domains
+# - Applying consistent Git repository defaults
+# - Enforcing security policies across all environments
+# - Standardizing ArgoCD project configurations
+#
+# Best practices:
+# - Keep this file minimal - prefer environment-specific overrides
+# - Document any global overrides with clear justification
+# - Test global changes across all environments before applying

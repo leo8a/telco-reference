@@ -1,0 +1,139 @@
+# =============================================================================
+# Telco Hub Pattern - Chart Default Values
+# =============================================================================
+# This file contains the default configuration for the telco-hub Helm chart.
+# These values reference existing telco-hub reference-crs without modification.
+# Override these defaults in values-global.yaml or environment-specific files.
+
+# =============================================================================
+# VALIDATED PATTERNS FRAMEWORK
+# =============================================================================
+
+global:
+  # -----------------------------------------------------------------------------
+  # Pattern Identity
+  # -----------------------------------------------------------------------------
+  pattern: telco-hub
+  namespace: telco-hub-pattern
+
+  # -----------------------------------------------------------------------------
+  # Cluster Domain Configuration  
+  # -----------------------------------------------------------------------------
+  hubClusterDomain: "apps.hub.example.com"
+  localClusterDomain: "apps.hub.example.com"  
+  clusterDomain: "apps.hub.example.com"
+
+  # -----------------------------------------------------------------------------
+  # Default Git Repository Configuration
+  # -----------------------------------------------------------------------------
+  repoURL: "https://github.com/your-org/telco-reference.git"
+  targetRevision: "HEAD"
+
+# ClusterGroup configuration for validated patterns
+clusterGroup:
+  name: hub
+  isHubCluster: true
+
+# =============================================================================
+# TELCO HUB CONFIGURATION
+# =============================================================================
+
+telcoHub:
+  # -----------------------------------------------------------------------------
+  # Git Repository Settings
+  # -----------------------------------------------------------------------------
+  git:
+    repoURL: "https://github.com/your-org/telco-reference.git"
+    targetRevision: "HEAD"
+  
+  # -----------------------------------------------------------------------------
+  # ArgoCD Configuration
+  # -----------------------------------------------------------------------------
+  argocd:
+    project: "infra"
+    namespace: "openshift-gitops"
+
+    # Default sync policy applied to all ArgoCD Applications
+    syncPolicy:
+      automated:
+        allowEmpty: true
+        prune: true
+        selfHeal: true
+
+  # =============================================================================
+  # COMPONENT CONFIGURATION
+  # =============================================================================
+  # Enable/disable telco-hub components and specify which reference-crs to deploy
+
+  components:
+    # -------------------------------------------------------------------------
+    # Required Components (Core telco-hub functionality)
+    # -------------------------------------------------------------------------
+    
+    # Advanced Cluster Management Platform
+    acm:
+      enabled: true               # Deploys: reference-crs/required/acm/
+    
+    # GitOps Operators and Configuration  
+    gitops:
+      enabled: true               # Deploys: reference-crs/required/gitops/
+    
+    # Topology Aware Lifecycle Manager
+    talm:
+      enabled: true               # Deploys: reference-crs/required/talm/
+
+    # -------------------------------------------------------------------------
+    # ZTP Workflow Components (Cluster Installation Management)
+    # -------------------------------------------------------------------------
+    
+    # ZTP Installation Applications and Policies
+    ztpInstallation:
+      enabled: true               # Deploys: reference-crs/required/gitops/ztp-installation/
+
+    # -------------------------------------------------------------------------
+    # Optional Components (Enable based on requirements)
+    # -------------------------------------------------------------------------
+    
+    # Local Storage Operator
+    lso:
+      enabled: false              # Deploys: reference-crs/optional/lso/
+    
+    # OpenShift Data Foundation (Software Defined Storage)
+    odf:
+      enabled: false              # Deploys: reference-crs/optional/odf-internal/
+
+    # Backup and Recovery (Velero/OADP)
+    backupRecovery:
+      enabled: false              # Deploys: reference-crs/optional/backup-recovery/
+    
+    # Cluster Logging Operator
+    logging:
+      enabled: false              # Deploys: reference-crs/optional/logging/
+
+# =============================================================================
+# CHART CONFIGURATION NOTES
+# =============================================================================
+#
+# Component Reference Architecture:
+# - All components reference existing telco-hub/configuration/reference-crs/ files
+# - No files are modified - only referenced by ArgoCD Applications
+# - Enable/disable components by setting enabled: true/false
+#
+# Required Components:
+# - acm: Provides multi-cluster management capabilities
+# - gitops: Deploys ArgoCD operators and base configuration  
+# - talm: Enables cluster lifecycle management and upgrades
+#
+# ZTP Workflow:
+# - ztpInstallation: Deploys ArgoCD Applications for cluster/policy management
+# - Requires external ZTP repository with cluster definitions and policies
+#
+# Optional Components:
+# - Enable only what you need for your specific telco-hub requirements
+# - Each component deploys a complete operator stack from reference-crs
+#
+# Customization:
+# - Use kustomize patches in environment values files for customization
+# - Modify git repository URLs and paths as needed
+# - Override syncPolicy settings for different environments
+ 

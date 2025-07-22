@@ -12,8 +12,8 @@ resources:
   - acmPerfSearch.yaml
   - acmProvisioning.yaml
   - observabilityNS.yaml
-  - observabilityOBC.yaml
-  - thanosSecret.yaml
-  # - observabilitySecret.yaml
-  - pull-secret-copy.yaml
-  - observabilityMCO.yaml
+#  - observabilityOBC.yaml
+#  - thanosSecret.yaml
+#  # - observabilitySecret.yaml
+#  - pull-secret-copy.yaml
+#  - observabilityMCO.yaml

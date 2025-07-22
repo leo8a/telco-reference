@@ -1,0 +1,293 @@
+# =============================================================================
+# Telco Hub Pattern - Environment Configuration
+# =============================================================================
+# This file contains environment-specific overrides for the telco-hub pattern.
+# Update the values below to match your specific environment and requirements.
+
+# =============================================================================
+# ENVIRONMENT CONFIGURATION
+# =============================================================================
+
+telcoHub:
+  # -----------------------------------------------------------------------------
+  # Git Repository Settings
+  # -----------------------------------------------------------------------------
+  # IMPORTANT: Update these values for your environment
+  git:
+    repoURL: "http://jumphost.inbound.vz.bos2.lab:3000/kni/telco-reference.git"
+    targetRevision: "add-telco-hub-pattern-bos2"
+
+  # -----------------------------------------------------------------------------
+  # Component Selection
+  # -----------------------------------------------------------------------------
+  # Enable/disable telco-hub components as needed for your environment
+
+  components:
+    # Required Components (for basic telco-hub functionality)
+    acm:
+      enabled: true              # Advanced Cluster Management
+    gitops:
+      enabled: true               # GitOps operators and ArgoCD configuration
+    talm:
+      enabled: true               # Topology Aware Lifecycle Manager
+
+    # ZTP Workflow (enable for cluster installation management)
+    ztpInstallation:
+      enabled: true               # GitOps ZTP cluster installation workflow
+
+    # Optional Components (enable as needed for your use case)
+    lso:
+      enabled: false              # Local Storage Operator
+    odf:
+      enabled: false              # OpenShift Data Foundation
+    backupRecovery:
+      enabled: false              # Backup and Recovery (Velero/OADP)
+    logging:
+      enabled: false              # Cluster Logging Operator
+
+  # =============================================================================
+  # CUSTOMIZATION OVERLAYS
+  # =============================================================================
+  # Use kustomize patches to customize the deployed resources for your environment.
+  # These patches modify the base reference-crs to match your specific requirements.
+
+  # -----------------------------------------------------------------------------
+  # GitOps Operator Customization
+  # -----------------------------------------------------------------------------
+  argocd:
+    kustomizePatches:
+      # Ensure the GitOps operator uses Red Hat catalog
+      - target:
+          group: operators.coreos.com
+          version: v1alpha1
+          kind: Subscription
+          name: openshift-gitops-operator
+        patch: |-
+          - op: replace
+            path: "/spec/source"
+            value: "redhat-operators"
+
+  # -----------------------------------------------------------------------------
+  # ACM (Advanced Cluster Management) Customization
+  # -----------------------------------------------------------------------------
+  acm:
+    kustomizePatches:
+      # Configure ACM Subscription to match the desired configuration
+      - target:
+          group: operators.coreos.com
+          version: v1alpha1
+          kind: Subscription
+          name: open-cluster-management-subscription
+        patch: |-
+          - op: replace
+            path: "/metadata/name"
+            value: "advanced-cluster-management"
+          - op: replace
+            path: "/spec/source"
+            value: "redhat-operators"
+
+      # Configure ACM AgentServiceConfig to match the desired configuration
+      - target:
+          group: agent-install.openshift.io
+          version: v1beta1
+          kind: AgentServiceConfig
+          name: agent
+        patch: |-
+          - op: replace
+            path: "/spec/mirrorRegistryRef/name"
+            value: "local-registry-mirror-config"
+          - op: remove
+            path: "/spec/imageStorage"
+          - op: replace
+            path: "/spec/osImages"
+            value:
+            - cpuArchitecture: x86_64
+              openshiftVersion: "4.14"
+              rootFSUrl: http://jumphost.inbound.vz.bos2.lab/4.14.7/rhcos-414.92.202310210434-0-live-rootfs.x86_64.img
+              url: http://jumphost.inbound.vz.bos2.lab/4.14.7/rhcos-414.92.202310210434-0-live.x86_64.iso
+              version: 413.92.202305021736-0
+            - cpuArchitecture: x86_64
+              openshiftVersion: "4.15"
+              rootFSUrl: http://jumphost.inbound.vz.bos2.lab/4.15.23-x86_64/rhcos-415.92.202407091355-0-live-rootfs.x86_64.img
+              url: http://jumphost.inbound.vz.bos2.lab/4.15.23-x86_64/rhcos-415.92.202407091355-0-live.x86_64.iso
+              version: 92.202407091355-0
+            - cpuArchitecture: x86_64
+              openshiftVersion: "4.16"
+              rootFSUrl: http://jumphost.inbound.vz.bos2.lab/4.16-9.4-x86_64/rhcos-416.94.202402021701-0-live-rootfs.x86_64.img
+              url: http://jumphost.inbound.vz.bos2.lab/4.16-9.4-x86_64/rhcos-416.94.202402021701-0-live.x86_64.iso
+              version: 416.94.202402021701-0
+            - cpuArchitecture: arm64
+              openshiftVersion: "4.16"
+              rootFSUrl: http://jumphost.inbound.vz.bos2.lab/4.16.35-aarch64/rhcos-416.94.202410211619-0-live-rootfs.aarch64.img
+              url: http://jumphost.inbound.vz.bos2.lab/4.16.35-aarch64/rhcos-416.94.202410211619-0-live.aarch64.iso
+              version: 416.94.202410211619-0
+            - cpuArchitecture: x86_64
+              openshiftVersion: "4.17"
+              rootFSUrl: http://jumphost.inbound.vz.bos2.lab/4.17.0-ec.0-x86_64/rhcos-417.94.202405291927-0-live-rootfs.x86_64.img
+              url: http://jumphost.inbound.vz.bos2.lab/4.17.0-ec.0-x86_64/rhcos-417.94.202405291927-0-live.x86_64.iso
+              version: 417.94.202405291927-0
+            - cpuArchitecture: x86_64
+              openshiftVersion: "4.18"
+              rootFSUrl: http://jumphost.inbound.vz.bos2.lab/4.18.0-ec.3-x86_64/rhcos-418.94.202410090804-0-live-rootfs.x86_64.img
+              url: http://jumphost.inbound.vz.bos2.lab/4.18.0-ec.3-x86_64/rhcos-418.94.202410090804-0-live.x86_64.iso
+              version: 418.94.202410090804-0
+            - cpuArchitecture: aarch64
+              openshiftVersion: "4.18"
+              rootFSUrl: http://jumphost.inbound.vz.bos2.lab/4.18.3-aarch64/rhcos-418.94.202501221327-0-live-rootfs.aarch64.img
+              url: http://jumphost.inbound.vz.bos2.lab/4.18.3-aarch64/rhcos-418.94.202501221327-0-live.aarch64.iso
+              version: 418.94.202501221327-0
+            - cpuArchitecture: arm64
+              openshiftVersion: "4.18"
+              rootFSUrl: http://jumphost.inbound.vz.bos2.lab/4.18.3-aarch64/rhcos-418.94.202501221327-0-live-rootfs.aarch64.img
+              url: http://jumphost.inbound.vz.bos2.lab/4.18.3-aarch64/rhcos-418.94.202501221327-0-live.aarch64.iso
+              version: 418.94.202501221327-0
+            - cpuArchitecture: x86_64
+              openshiftVersion: "4.19"
+              rootFSUrl: http://jumphost.inbound.vz.bos2.lab/4.19.0-ec.0-x86_64/rhcos-418.94.202410090804-0-live-rootfs.x86_64.img
+              url: http://jumphost.inbound.vz.bos2.lab/4.19.0-ec.0-x86_64/rhcos-418.94.202410090804-0-live.x86_64.iso
+              version: 418.94.202410090804-0
+            - cpuArchitecture: aarch64
+              openshiftVersion: "4.19"
+              rootFSUrl: http://jumphost.inbound.vz.bos2.lab/4.19.0-aarch64/rhcos-4.19.0-aarch64-live-rootfs.aarch64.img
+              url: http://jumphost.inbound.vz.bos2.lab/4.19.0-aarch64/rhcos-live-iso.aarch64.iso
+              version: 418.94.202501221327-0
+            - cpuArchitecture: arm64
+              openshiftVersion: "4.19"
+              rootFSUrl: http://jumphost.inbound.vz.bos2.lab/4.19.0-aarch64/rhcos-4.19.0-aarch64-live-rootfs.aarch64.img
+              url: http://jumphost.inbound.vz.bos2.lab/4.19.0-aarch64/rhcos-live-iso.aarch64.iso
+              version: 418.94.202501221327-0
+            - cpuArchitecture: x86_64
+              openshiftVersion: "4.20"
+              rootFSUrl: http://jumphost.inbound.vz.bos2.lab/4.20.0-ec.4/rhcos-4.20.0-ec.4-x86_64-live-rootfs.x86_64.img
+              url: http://jumphost.inbound.vz.bos2.lab/4.20.0-ec.4/rhcos-4.20.0-ec.4-x86_64-live-iso.x86_64.iso
+              version: 418.94.202410090804-0
+            - cpuArchitecture: aarch64
+              openshiftVersion: "4.20"
+              rootFSUrl: http://jumphost.inbound.vz.bos2.lab/4.20.0-ec.4/rhcos-live-rootfs.aarch64.img
+              url: http://jumphost.inbound.vz.bos2.lab/4.20.0-ec.4/rhcos-live-iso.aarch64.iso
+              version: 418.94.202501221327-0
+            - cpuArchitecture: arm64
+              openshiftVersion: "4.20"
+              rootFSUrl: http://jumphost.inbound.vz.bos2.lab/4.20.0-ec.4/rhcos-live-rootfs.aarch64.img
+              url: http://jumphost.inbound.vz.bos2.lab/4.20.0-ec.4/rhcos-live-iso.aarch64.iso
+              version: 418.94.202501221327-0
+
+  # -----------------------------------------------------------------------------
+  # TALM Operator Customization
+  # -----------------------------------------------------------------------------
+  talm:
+    kustomizePatches:
+      # Ensure the TALM operator uses Red Hat catalog
+      - target:
+          group: operators.coreos.com
+          version: v1alpha1
+          kind: Subscription
+          name: openshift-topology-aware-lifecycle-manager-subscription
+        patch: |-
+          - op: replace
+            path: "/spec/source"
+            value: "redhat-operators"
+
+  # -----------------------------------------------------------------------------
+  # ZTP Workflow Customization
+  # -----------------------------------------------------------------------------
+  # Configure ZTP Applications to point to your cluster and policy repositories
+  ztpInstallation:
+    kustomizePatches:
+      # Configure clusters Application
+      - target:
+          group: argoproj.io
+          version: v1alpha1
+          kind: Application
+          name: clusters
+        patch: |-
+          - op: replace
+            path: "/spec/source/path"
+            value: "clusters"
+          - op: replace
+            path: "/spec/source/repoURL"
+            value: "http://jumphost.inbound.vz.bos2.lab:3000/kni/faredge-ztp.git"
+          - op: remove
+            path: "/spec/syncPolicy"
+
+      # Configure policies Application
+      - target:
+          group: argoproj.io
+          version: v1alpha1
+          kind: Application
+          name: policies
+        patch: |-
+          - op: replace
+            path: "/spec/source/path"
+            value: "site-policies"
+          - op: replace
+            path: "/spec/source/repoURL"
+            value: "http://jumphost.inbound.vz.bos2.lab:3000/kni/faredge-ztp.git"
+
+  # -----------------------------------------------------------------------------
+  # Local Storage Operator Customization
+  # -----------------------------------------------------------------------------
+  lso:
+    kustomizePatches:
+      # Ensure the LSO operator uses Red Hat catalog
+      - target:
+          group: operators.coreos.com
+          version: v1alpha1
+          kind: Subscription
+          name: local-storage-operator
+        patch: |-
+          - op: replace
+            path: "/spec/source"
+            value: "redhat-operators"
+
+  # -----------------------------------------------------------------------------
+  # ODF (OpenShift Data Foundation) Customization
+  # -----------------------------------------------------------------------------
+  odf:
+    kustomizePatches:
+      # Ensure the ODF operator uses Red Hat catalog
+      - target:
+          group: operators.coreos.com
+          version: v1alpha1
+          kind: Subscription
+          name: odf-operator
+        patch: |-
+          - op: replace
+            path: "/spec/source"
+            value: "redhat-operators"
+
+  # -----------------------------------------------------------------------------
+  # Cluster Logging Operator Customization
+  # -----------------------------------------------------------------------------
+  logging:
+    kustomizePatches:
+      # Ensure the Cluster Logging operator uses Red Hat catalog and stable-6.3 channel
+      - target:
+          group: operators.coreos.com
+          version: v1alpha1
+          kind: Subscription
+          name: cluster-logging
+        patch: |-
+          - op: replace
+            path: "/spec/source"
+            value: "redhat-operators"
+          - op: replace
+            path: "/spec/channel"
+            value: "stable-6.3"
+
+
+# =============================================================================
+# QUICK CONFIGURATION REFERENCE
+# =============================================================================
+# To customize this configuration:
+#
+# 1. Update git.repoURL and git.targetRevision to point to your telco-reference repo
+# 2. Enable/disable components based on your requirements
+# 3. Modify kustomize patches to match your environment-specific values
+# 4. Update ZTP repoURL values in ztpInstallation patches for your cluster/policy repos
+# 5. Ensure all repoURL values point to accessible Git repositories
+#
+# Common customizations:
+# - Change operator catalog sources (community-operators vs redhat-operators)
+# - Modify ZTP repository URLs and paths for clusters and policies
+# - Adjust Application source paths and target revisions

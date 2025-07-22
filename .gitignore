@@ -1,0 +1,6 @@
+# Folders
+.idea/
+**/output/
+
+# Files
+**/values-secret.yaml
