@@ -3,9 +3,16 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
   name: openshift-gitops-operator
-  namespace: openshift-gitops-operator
+  namespace: openshift-operators
 spec:
   channel: gitops-1.16
+  config:
+    env:
+      # Allow ArgoCD to manage resources across all namespaces in the cluster
+      # This is required for the telco-hub pattern to deploy and manage components
+      # (ACM, TALM, ZTP, LSO, ODF, etc.) in their respective target namespaces
+      - name: ARGOCD_CLUSTER_CONFIG_NAMESPACES
+        value: '*'  # '*' enables cluster-wide namespace access for GitOps operations
   installPlanApproval: Automatic
   name: openshift-gitops-operator
   source: redhat-operators-disconnected
