@@ -7,13 +7,13 @@ resources:
   - acmSubscription.yaml
   - acmMCH.yaml
   - acmMCE.yaml
-  - acmAgentServiceConfig.yaml
-  - acmMirrorRegistryCM.yaml
-  - acmPerfSearch.yaml
-  - acmProvisioning.yaml
-  - observabilityNS.yaml
-  - observabilityOBC.yaml
-  - thanosSecret.yaml
-  # - observabilitySecret.yaml
-  - pull-secret-copy.yaml
-  - observabilityMCO.yaml
+#  - acmAgentServiceConfig.yaml
+#  - acmMirrorRegistryCM.yaml
+#  - acmPerfSearch.yaml
+#  - acmProvisioning.yaml
+#  - observabilityNS.yaml
+#  - observabilityOBC.yaml
+#  - thanosSecret.yaml
+#  # - observabilitySecret.yaml
+#  - pull-secret-copy.yaml
+#  - observabilityMCO.yaml
